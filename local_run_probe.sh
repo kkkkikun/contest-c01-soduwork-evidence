@@ -209,6 +209,50 @@ VENV_PY="$STATE_DIR/venv/bin/python"
   fi
 } 2>&1 | tee "$CHECK_OUT"
 
+# ---------------------------------------------------------------- 步骤 5b 门禁实测
+step "实跑上游的确定性门禁与独立复核协议层（两项都不需要模型 API Key）"
+
+# 两个探针脚本可能与本脚本同目录（公开证据仓库），也可能在 evidence/local_run/ 下（内部工作区）
+find_probe() {
+  local name="$1"
+  for cand in "$SCRIPT_DIR/$name" \
+              "$SCRIPT_DIR/../evidence/local_run/$name" \
+              "$OUT_DIR/$name"; do
+    [ -f "$cand" ] && { printf '%s' "$cand"; return 0; }
+  done
+  return 1
+}
+
+GATE_JS="$(find_probe probe_goal_verifier.js || true)"
+REVIEW_JS="$(find_probe probe_goal_review.js || true)"
+
+GATE_OUT="$OUT_DIR/probe_goal_verifier.txt"
+REVIEW_OUT="$OUT_DIR/probe_goal_review.txt"
+
+if [ -n "$GATE_JS" ] && command -v node >/dev/null 2>&1; then
+  say "运行确定性门禁探针（8 个用例）→ $GATE_OUT"
+  set +e
+  node "$GATE_JS" --repo "$REPO_DIR" 2>&1 | tee "$GATE_OUT"
+  GATE_RC="${PIPESTATUS[0]}"
+  set -e
+  say "门禁探针退出码 = $GATE_RC"
+else
+  GATE_RC=1
+  say "⚠ 找不到 probe_goal_verifier.js 或没有 node —— 跳过确定性门禁实测"
+fi
+
+if [ -n "$REVIEW_JS" ] && command -v node >/dev/null 2>&1; then
+  say "运行独立复核协议层探针（6 个用例）→ $REVIEW_OUT"
+  set +e
+  node "$REVIEW_JS" --repo "$REPO_DIR" 2>&1 | tee "$REVIEW_OUT"
+  REVIEW_RC="${PIPESTATUS[0]}"
+  set -e
+  say "复核协议层探针退出码 = $REVIEW_RC"
+else
+  REVIEW_RC=1
+  say "⚠ 找不到 probe_goal_review.js 或没有 node —— 跳过独立复核协议层实测"
+fi
+
 # ---------------------------------------------------------------- 步骤 6 汇总
 step "汇总与截图指引"
 SUMMARY="$OUT_DIR/SUMMARY.txt"
@@ -228,24 +272,32 @@ SUMMARY="$OUT_DIR/SUMMARY.txt"
   echo
   echo "== 自检结论 =="
   cat "$CHECK_OUT"
+  echo
+  echo "== 确定性门禁实测结论（8 个用例）=="
+  [ -f "$GATE_OUT" ] && cat "$GATE_OUT" || echo "（未运行）"
+  echo
+  echo "== 独立复核协议层实测结论（6 个用例）=="
+  [ -f "$REVIEW_OUT" ] && cat "$REVIEW_OUT" || echo "（未运行）"
 } > "$SUMMARY"
 
 cat <<'EOF'
 
 ────────────────────────────────────────────────────────────
-✅ 全流程跑完了。现在请在「你自己的电脑」上截这 4 张图：
+✅ 全流程跑完了。现在请在「你自己的电脑」上截这 7 张图：
 
   图 1  终端里执行 `git -C <仓库目录> remote -v` 的输出
         （要能看到 origin = https://github.com/kkkkikun/SoduWork.git）
   图 2  浏览器打开 http://127.0.0.1:18989/ ，用 admin 登录后的
         「能力配置 → 模型目录」页面（应显示 10 家内置服务商）
   图 3  终端里 `cat <输出目录>/probe_admin_api.txt` 的完整输出
-        （4 项探针：404 / 404 / 200 / 401）
+        （5 条断言：200 / 404 / 404 / 200 / 401）
   图 4  终端里 `cat <输出目录>/upstream_selfcheck.txt` 的输出
         （上游自检：launcher 123 项 + 公开源清单 ok=true）
-
-  另外（可选但加分）：浏览器打开
-        http://127.0.0.1:18989/ → 「审计日志」或「模型目录」页，
+  图 5  终端里 `cat <输出目录>/probe_goal_verifier.txt` 的完整输出
+        （确定性门禁 8 个用例：类型门禁拦得住 / 超 2MB 与超 120 文件处漏检 / 对照组与放宽变体验证归因）
+  图 6  终端里 `cat <输出目录>/probe_goal_review.txt` 的完整输出
+        （独立复核协议层 6 个用例：模型不能覆盖已失败的确定性门禁 / verdict=pass 但分数不够被降级）
+  图 7  （可选但加分）浏览器打开 http://127.0.0.1:18989/ ，
         截一张能体现「这是你自己机器上的本地实例」的图（含地址栏 127.0.0.1）。
 
   把图和 <输出目录>/ 整个目录发给我，我据此定稿文章的 §10 与 §11。
@@ -254,9 +306,13 @@ EOF
 say "汇总已写入 $SUMMARY"
 
 # 服务保持运行，方便截图；结束时用 `kill $(cat $OUT_DIR/service.pid)` 停掉。
-if [ "$PROBE_RC" != "0" ]; then
-  say "⚠ 探针存在不符项（退出码 $PROBE_RC）—— 以实测值为准，不要改预期凑数。"
-  exit "$PROBE_RC"
+RC=0
+[ "${PROBE_RC:-1}" = "0" ] || { say "⚠ 管理 API 探针存在不符项（退出码 $PROBE_RC）—— 以实测值为准，不要改预期凑数。"; RC=1; }
+[ "${GATE_RC:-1}" = "0" ]  || { say "⚠ 确定性门禁探针存在不符项（退出码 $GATE_RC）—— 以实测值为准。"; RC=1; }
+[ "${REVIEW_RC:-1}" = "0" ] || { say "⚠ 独立复核协议层探针存在不符项（退出码 $REVIEW_RC）—— 以实测值为准。"; RC=1; }
+if [ "$RC" != "0" ]; then
+  say "完成，但有探针不符项（退出码 $RC）。"
+  exit "$RC"
 fi
 say "完成。退出码 0。"
 exit 0

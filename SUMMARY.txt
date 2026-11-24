@@ -1,5 +1,5 @@
 SoduWork 本机运行取证汇总
-生成时间 = 2026-11-24T12:17:04+08:00
+生成时间 = 2026-11-24T13:51:14+08:00
 本机 = Linux 5.15.167.4-microsoft-standard-WSL2 x86_64 / Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.35
 Fork 地址 = https://github.com/kkkkikun/SoduWork.git
 取证 commit = 5a60c86697bcde25548c4277ba585b71f31c9338
@@ -14,8 +14,8 @@ SoduWork 管理 API 实测（本地实例）
 目标 = http://127.0.0.1:18989
 ========================================================================
 [PASS] [1] POST /api/v1/admin/login（鉴权入口）: 实测=200 期望=200  token 已获取，长度 233
-[PASS] [2] GET /api/v1/admin/model-providers（带 token）: 实测=404 期望=404  源码依据 admin.py:1361/1405/1430/1449（PUT/DELETE/POST）
-[PASS] [2] GET /api/v1/admin/model-defs（带 token）: 实测=404 期望=404  源码依据 admin.py:1478/1540（PUT/DELETE）
+[PASS] [2a] GET /api/v1/admin/model-providers（带 token）: 实测=404 期望=404  源码依据 admin.py:1361/1405/1430/1449（PUT/DELETE/POST）
+[PASS] [2b] GET /api/v1/admin/model-defs（带 token）: 实测=404 期望=404  源码依据 admin.py:1478/1540（PUT/DELETE）
 [PASS] [3] GET /api/v1/admin/model-catalog（带 token）: 实测=200 期望=200  源码依据 admin.py:1355
        内置服务商数量 = 10
          - company | 共享模型服务
@@ -31,7 +31,7 @@ SoduWork 管理 API 实测（本地实例）
        已配置模型 defs 数量 = 0
 [PASS] [4] GET /api/v1/admin/model-catalog（不带 token）: 实测=401 期望=401  源码依据 require_perm("integration.manage") 依赖
 ========================================================================
-结论：4 项全部与源码推断一致（本次运行证伪了我最初的 2 处路由推断）。
+结论：5 条断言全部与源码推断一致（脚本按 4 组编号，model-providers 与 model-defs 同属第 2 组；本次运行证伪了我最初的 2 处路由推断）。
 
 == 自检结论 ==
 ===== 上游自带检查（upstream commit 5a60c86697bcde25548c4277ba585b71f31c9338）=====
@@ -44,8 +44,8 @@ python -m unittest: error: This fixture requires an isolated source verification
 首次创建管理员 / Create the administrator account: owner
 ...Install fixture
   完成 / Done (0.0s)
-.................................s....数据目录 / Data directory: /tmp/soduwork-start-unit-66pm9lhs/service
-详细日志 / Detailed log: /tmp/soduwork-start-unit-66pm9lhs/service/startup.log
+.................................s....数据目录 / Data directory: /tmp/soduwork-start-unit-rh6_weel/service
+详细日志 / Detailed log: /tmp/soduwork-start-unit-rh6_weel/service/startup.log
 首次启动需要联网下载依赖，可能需要数分钟。已完成的步骤会复用，请勿重复启动。
 First setup downloads dependencies and can take several minutes. Completed steps are reused.
 ................Preparation complete. Run the same command without --prepare-only to start SoduWork.
@@ -54,7 +54,7 @@ Retry fixture
   完成 / Done (0.0s)
 ......s.................
 ----------------------------------------------------------------------
-Ran 123 tests in 2.848s
+Ran 123 tests in 2.908s
 
 OK (skipped=2)
 A 退出码 = 0
@@ -68,3 +68,189 @@ A 退出码 = 0
   "errors": []
 }
 B 退出码 = 0
+
+== 确定性门禁实测结论（8 个用例）==
+==============================================================================
+SoduWork 确定性门禁（goal-verifier.js）真实实测
+被测模块 = ~/SoduWork/client/main/conversation/goal-verifier.js
+上游 commit = 5a60c86697bcde25548c4277ba585b71f31c9338
+==============================================================================
+
+[用例 1] 文档任务却交网页
+  期望：delivery_type = FAIL
+  实际：与预期一致　overall.pass=false　summary=确定性交付验收未通过
+  详情：缺少 document/pdf，实际为 website
+  逐项：
+    [PASS] mutation               真实改动
+    [PASS] verification           可重放验证
+    [PASS] execution_errors       无未解决执行错误
+    [PASS] launch                 真实启动与健康探针
+    [PASS] visual                 界面与关键旅程实查
+    [PASS] delivery_manifest      可核验交付清单
+    [PASS] deliverables           最终成果存在
+    [FAIL] delivery_type          交付物类型与目标一致　→ 缺少 document/pdf，实际为 website
+    [PASS] artifact_integrity     交付物格式与内容有效
+    [PASS] website_package_1      网站运行资源完整
+
+[用例 2] 网站引用缺失的本地资源
+  期望：website_package_1 = FAIL
+  实际：与预期一致　overall.pass=false　summary=确定性交付验收未通过
+  详情：存在缺失的本地资源：missing.js
+  逐项：
+    [PASS] mutation               真实改动
+    [PASS] verification           可重放验证
+    [PASS] execution_errors       无未解决执行错误
+    [PASS] launch                 真实启动与健康探针
+    [PASS] visual                 界面与关键旅程实查
+    [PASS] delivery_manifest      可核验交付清单
+    [PASS] deliverables           最终成果存在
+    [PASS] delivery_type          交付物类型与目标一致
+    [PASS] artifact_integrity     交付物格式与内容有效
+    [FAIL] website_package_1      网站运行资源完整　→ 存在缺失的本地资源：missing.js
+
+[用例 3] 超大文本文件(3MB)里的坏引用是否被查出【原版上限】
+  期望：website_package_1 = PASS（该文件超过 MAX_TEXT_BYTES=2MB 被跳过扫描，坏引用漏检）
+  实际：与预期一致　overall.pass=true　summary=确定性交付验收已通过
+  详情：（通过，无缺口）
+  逐项：
+    [PASS] mutation               真实改动
+    [PASS] verification           可重放验证
+    [PASS] execution_errors       无未解决执行错误
+    [PASS] launch                 真实启动与健康探针
+    [PASS] visual                 界面与关键旅程实查
+    [PASS] delivery_manifest      可核验交付清单
+    [PASS] deliverables           最终成果存在
+    [PASS] delivery_type          交付物类型与目标一致
+    [PASS] artifact_integrity     交付物格式与内容有效
+    [PASS] website_package_1      网站运行资源完整
+
+[用例 4] 站点资源数 130（超过 MAX_SITE_FILES=120）时第 130 个文件里的坏引用【原版上限】
+  期望：website_package_1 = PASS（遍历在 120 个文件处封顶，后续文件不被扫描，坏引用漏检）
+  实际：与预期一致　overall.pass=true　summary=确定性交付验收已通过
+  详情：（通过，无缺口）
+  逐项：
+    [PASS] mutation               真实改动
+    [PASS] verification           可重放验证
+    [PASS] execution_errors       无未解决执行错误
+    [PASS] launch                 真实启动与健康探针
+    [PASS] visual                 界面与关键旅程实查
+    [PASS] delivery_manifest      可核验交付清单
+    [PASS] deliverables           最终成果存在
+    [PASS] delivery_type          交付物类型与目标一致
+    [PASS] artifact_integrity     交付物格式与内容有效
+    [PASS] website_package_1      网站运行资源完整
+
+[用例 5] 干净的网站交付（正对照）
+  期望：全部检查项 PASS
+  实际：与预期一致　overall.pass=true　summary=确定性交付验收已通过
+  详情：确定性交付验收已通过
+  逐项：
+    [PASS] mutation               真实改动
+    [PASS] verification           可重放验证
+    [PASS] execution_errors       无未解决执行错误
+    [PASS] launch                 真实启动与健康探针
+    [PASS] visual                 界面与关键旅程实查
+    [PASS] delivery_manifest      可核验交付清单
+    [PASS] deliverables           最终成果存在
+    [PASS] delivery_type          交付物类型与目标一致
+    [PASS] artifact_integrity     交付物格式与内容有效
+    [PASS] website_package_1      网站运行资源完整
+
+[用例 6] 同样构造但文件只有 1MB（未超限）【对照组】
+  期望：website_package_1 = FAIL（同一构造在未超限时能被查出 → 证明构造本身有效）
+  实际：与预期一致　overall.pass=false　summary=确定性交付验收未通过
+  详情：存在缺失的本地资源：missing-inside-big.js
+  逐项：
+    [PASS] mutation               真实改动
+    [PASS] verification           可重放验证
+    [PASS] execution_errors       无未解决执行错误
+    [PASS] launch                 真实启动与健康探针
+    [PASS] visual                 界面与关键旅程实查
+    [PASS] delivery_manifest      可核验交付清单
+    [PASS] deliverables           最终成果存在
+    [PASS] delivery_type          交付物类型与目标一致
+    [PASS] artifact_integrity     交付物格式与内容有效
+    [FAIL] website_package_1      网站运行资源完整　→ 存在缺失的本地资源：missing-inside-big.js
+
+[用例 7] 同样构造，把 MAX_TEXT_BYTES 放宽到 1GB 后重跑【上限放宽变体】
+  期望：website_package_1 = FAIL（放宽上限后同一构造被查出 → 归因闭环）
+  实际：与预期一致　overall.pass=false　summary=确定性交付验收未通过
+  详情：存在缺失的本地资源：missing-inside-big.js
+  逐项：
+    [PASS] mutation               真实改动
+    [PASS] verification           可重放验证
+    [PASS] execution_errors       无未解决执行错误
+    [PASS] launch                 真实启动与健康探针
+    [PASS] visual                 界面与关键旅程实查
+    [PASS] delivery_manifest      可核验交付清单
+    [PASS] deliverables           最终成果存在
+    [PASS] delivery_type          交付物类型与目标一致
+    [PASS] artifact_integrity     交付物格式与内容有效
+    [FAIL] website_package_1      网站运行资源完整　→ 存在缺失的本地资源：missing-inside-big.js
+
+[用例 8] 同样构造，把 MAX_SITE_FILES 放宽到 100000 后重跑【上限放宽变体】
+  期望：website_package_1 = FAIL（放宽上限后同一构造被查出 → 归因闭环）
+  实际：与预期一致　overall.pass=false　summary=确定性交付验收未通过
+  详情：存在缺失的本地资源：missing-beyond-cap.js
+  逐项：
+    [PASS] mutation               真实改动
+    [PASS] verification           可重放验证
+    [PASS] execution_errors       无未解决执行错误
+    [PASS] launch                 真实启动与健康探针
+    [PASS] visual                 界面与关键旅程实查
+    [PASS] delivery_manifest      可核验交付清单
+    [PASS] deliverables           最终成果存在
+    [PASS] delivery_type          交付物类型与目标一致
+    [PASS] artifact_integrity     交付物格式与内容有效
+    [FAIL] website_package_1      网站运行资源完整　→ 存在缺失的本地资源：missing-beyond-cap.js
+
+==============================================================================
+结论：8 个用例全部与预期一致。
+==============================================================================
+
+== 独立复核协议层实测结论（6 个用例）==
+==============================================================================
+SoduWork 独立复核协议层（goal-review.js · outcome）真实实测
+被测模块 = ~/SoduWork/client/main/conversation/goal-review.js
+上游 commit = 5a60c86697bcde25548c4277ba585b71f31c9338
+边界：本脚本测协议层的判定与阻断逻辑，不测模型输出质量。
+==============================================================================
+
+[用例 1] 确定性门禁已失败 + 独立复核 verdict=pass
+  期望：phase=blocked 且 source=deterministic-verifier（模型不能覆盖已失败的确定性门禁）
+  实际：与预期一致
+  详情：phase=blocked source=deterministic-verifier reason=缺少 document/pdf，实际为 website
+  缺口：delivery_type → 缺少 document/pdf，实际为 website
+
+[用例 2] 确定性门禁通过 + 独立复核返回畸形 JSON
+  期望：phase=blocked 且 source=verifier-protocol（畸形输入不被兜底成通过）
+  实际：与预期一致
+  详情：phase=blocked source=verifier-protocol reason=独立复核没有返回可解析的结构化结论
+  缺口：verifier_protocol → missing json object
+
+[用例 3] verdict=pass 但缺少一个评分维度
+  期望：phase=blocked 且 source=verifier-protocol（缺字段不能放行）
+  实际：与预期一致
+  详情：phase=blocked source=verifier-protocol reason=独立复核缺少完整质量评分：completeness
+  缺口：verifier_scores → 未评分维度：completeness
+
+[用例 4] verdict=pass 但综合分只有 59 分（门槛 85）
+  期望：phase=blocked 且 source=independent-verifier（模型说 pass 会被强制降级为 repair）
+  实际：与预期一致
+  详情：phase=blocked source=independent-verifier reason=我认为可以过
+  缺口：quality:correctness → 正确性 60 分，低于门槛 80 分；quality:completeness → 完整性 58 分，低于门槛 80 分
+
+[用例 5] verdict 返回无效值（looks good）
+  期望：phase=blocked 且 source=verifier-protocol（无效 verdict 不放行）
+  实际：与预期一致
+  详情：phase=blocked source=verifier-protocol reason=独立复核返回了无效 verdict
+  缺口：verifier_protocol → verdict=looks good
+
+[用例 6] 确定性通过 + 完整评分且达标 + verdict=pass（正对照）
+  期望：phase=reviewed（唯一能放行的路径）
+  实际：与预期一致
+  详情：phase=reviewed source=independent-verifier reason=独立复核已通过 score=94
+
+==============================================================================
+结论：6 个用例全部与预期一致。
+==============================================================================
