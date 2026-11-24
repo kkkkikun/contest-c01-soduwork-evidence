@@ -1,0 +1,96 @@
+SoduWork 本机取证脚本 —— 开始
+时间 = 2026-11-24T12:00:22+08:00
+输出目录 = ~/soduwork-local-evidence
+仓库目录 = ~/SoduWork
+数据目录 = ~/.local/share/soduwork/source-service
+Python = ~/.local/bin/python3.12 (Python 3.12.13)
+Node = v22.21.1
+可用磁盘 = 588G（首次安装需要约 3-5 GB）
+Cloning into '~/SoduWork'...
+--- git remote -v ---
+origin	https://github.com/kkkkikun/SoduWork.git (fetch)
+origin	https://github.com/kkkkikun/SoduWork.git (push)
+--- git log -1 ---
+commit 5a60c86697bcde25548c4277ba585b71f31c9338
+作者 yong.zhang <747299003@qq.com>
+日期 Sun Nov 22 21:26:39 2026 +0800
+取证 commit = 5a60c86697bcde25548c4277ba585b71f31c9338
+首次运行需联网下载依赖，可能 3-10 分钟。
+数据目录 / Data directory: ~/.local/share/soduwork/source-service
+详细日志 / Detailed log: ~/.local/share/soduwork/source-service/startup.log
+首次启动需要联网下载依赖，可能需要数分钟。已完成的步骤会复用，请勿重复启动。
+First setup downloads dependencies and can take several minutes. Completed steps are reused.
+[1/4] 创建独立环境 / Creating a private Python environment
+  完成 / Done (3.2s)
+[2/4] 安装服务依赖 / Installing server dependencies (first run needs internet)
+  正在进行 / Still running: [2/4] 安装服务依赖 / Installing server dependencies (first run needs internet) (15s). 请保持窗口打开 / Keep this window open.
+  正在进行 / Still running: [2/4] 安装服务依赖 / Installing server dependencies (first run needs internet) (30s). 请保持窗口打开 / Keep this window open.
+  正在进行 / Still running: [2/4] 安装服务依赖 / Installing server dependencies (first run needs internet) (45s). 请保持窗口打开 / Keep this window open.
+  正在进行 / Still running: [2/4] 安装服务依赖 / Installing server dependencies (first run needs internet) (60s). 请保持窗口打开 / Keep this window open.
+  正在进行 / Still running: [2/4] 安装服务依赖 / Installing server dependencies (first run needs internet) (75s). 请保持窗口打开 / Keep this window open.
+  正在进行 / Still running: [2/4] 安装服务依赖 / Installing server dependencies (first run needs internet) (90s). 请保持窗口打开 / Keep this window open.
+  正在进行 / Still running: [2/4] 安装服务依赖 / Installing server dependencies (first run needs internet) (105s). 请保持窗口打开 / Keep this window open.
+  正在进行 / Still running: [2/4] 安装服务依赖 / Installing server dependencies (first run needs internet) (120s). 请保持窗口打开 / Keep this window open.
+  正在进行 / Still running: [2/4] 安装服务依赖 / Installing server dependencies (first run needs internet) (135s). 请保持窗口打开 / Keep this window open.
+  正在进行 / Still running: [2/4] 安装服务依赖 / Installing server dependencies (first run needs internet) (150s). 请保持窗口打开 / Keep this window open.
+  正在进行 / Still running: [2/4] 安装服务依赖 / Installing server dependencies (first run needs internet) (165s). 请保持窗口打开 / Keep this window open.
+  正在进行 / Still running: [2/4] 安装服务依赖 / Installing server dependencies (first run needs internet) (180s). 请保持窗口打开 / Keep this window open.
+  正在进行 / Still running: [2/4] 安装服务依赖 / Installing server dependencies (first run needs internet) (195s). 请保持窗口打开 / Keep this window open.
+  正在进行 / Still running: [2/4] 安装服务依赖 / Installing server dependencies (first run needs internet) (210s). 请保持窗口打开 / Keep this window open.
+  正在进行 / Still running: [2/4] 安装服务依赖 / Installing server dependencies (first run needs internet) (225s). 请保持窗口打开 / Keep this window open.
+  正在进行 / Still running: [2/4] 安装服务依赖 / Installing server dependencies (first run needs internet) (240s). 请保持窗口打开 / Keep this window open.
+  正在进行 / Still running: [2/4] 安装服务依赖 / Installing server dependencies (first run needs internet) (255s). 请保持窗口打开 / Keep this window open.
+  正在进行 / Still running: [2/4] 安装服务依赖 / Installing server dependencies (first run needs internet) (270s). 请保持窗口打开 / Keep this window open.
+  正在进行 / Still running: [2/4] 安装服务依赖 / Installing server dependencies (first run needs internet) (285s). 请保持窗口打开 / Keep this window open.
+  正在进行 / Still running: [2/4] 安装服务依赖 / Installing server dependencies (first run needs internet) (300s). 请保持窗口打开 / Keep this window open.
+  正在进行 / Still running: [2/4] 安装服务依赖 / Installing server dependencies (first run needs internet) (315s). 请保持窗口打开 / Keep this window open.
+  正在进行 / Still running: [2/4] 安装服务依赖 / Installing server dependencies (first run needs internet) (330s). 请保持窗口打开 / Keep this window open.
+  完成 / Done (342.0s)
+[Runner] 检查本地运行环境 / Checking the local Runner environment
+  完成 / Done (0.4s)
+[3/4] 安装页面依赖 / Installing management UI dependencies
+  完成 / Done (9.2s)
+[4/4] 构建管理页面 / Building the management UI
+  完成 / Done (10.8s)
+Preparation complete. Run the same command without --prepare-only to start SoduWork.
+prepare 完成。
+已生成管理员密码并保存到 ~/soduwork-local-evidence/admin_password.txt（权限 600，仅本机可见）
+启动中…（首次启动要等数据库迁移，最多 10 分钟）
+服务进程 PID = 812234，输出见 ~/soduwork-local-evidence/service_stdout.log
+服务就绪：http://127.0.0.1:18989
+探针退出码 = 0（输出见 ~/soduwork-local-evidence/probe_admin_api.txt）
+汇总已写入 ~/soduwork-local-evidence/SUMMARY.txt
+完成。退出码 0。
+SoduWork 本机取证脚本 —— 开始
+时间 = 2026-11-24T12:16:47+08:00
+输出目录 = ~/soduwork-local-evidence
+仓库目录 = ~/SoduWork
+数据目录 = ~/.local/share/soduwork/source-service
+Python = ~/.local/bin/python3.12 (Python 3.12.13)
+Node = v22.21.1
+可用磁盘 = 588G（首次安装需要约 3-5 GB）
+已存在，跳过克隆：~/SoduWork
+--- git remote -v ---
+origin	https://github.com/kkkkikun/SoduWork.git (fetch)
+origin	https://github.com/kkkkikun/SoduWork.git (push)
+--- git log -1 ---
+commit 5a60c86697bcde25548c4277ba585b71f31c9338
+作者 yong.zhang <747299003@qq.com>
+日期 Sun Nov 22 21:26:39 2026 +0800
+取证 commit = 5a60c86697bcde25548c4277ba585b71f31c9338
+首次运行需联网下载依赖，可能 3-10 分钟。
+数据目录 / Data directory: ~/.local/share/soduwork/source-service
+详细日志 / Detailed log: ~/.local/share/soduwork/source-service/startup.log
+首次启动需要联网下载依赖，可能需要数分钟。已完成的步骤会复用，请勿重复启动。
+First setup downloads dependencies and can take several minutes. Completed steps are reused.
+[Runner] 检查本地运行环境 / Checking the local Runner environment
+  完成 / Done (0.4s)
+Preparation complete. Run the same command without --prepare-only to start SoduWork.
+prepare 完成。
+复用已记录的管理员密码（~/soduwork-local-evidence/admin_password.txt）
+启动中…（首次启动要等数据库迁移，最多 10 分钟）
+服务进程 PID = 889018，输出见 ~/soduwork-local-evidence/service_stdout.log
+服务就绪：http://127.0.0.1:18989
+探针退出码 = 0（输出见 ~/soduwork-local-evidence/probe_admin_api.txt）
+汇总已写入 ~/soduwork-local-evidence/SUMMARY.txt
+完成。退出码 0。

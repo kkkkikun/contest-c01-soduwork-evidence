@@ -1,0 +1,70 @@
+SoduWork 本机运行取证汇总
+生成时间 = 2026-11-24T12:17:04+08:00
+本机 = Linux 5.15.167.4-microsoft-standard-WSL2 x86_64 / Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.35
+Fork 地址 = https://github.com/kkkkikun/SoduWork.git
+取证 commit = 5a60c86697bcde25548c4277ba585b71f31c9338
+服务地址 = http://127.0.0.1:18989
+管理员账号 = admin
+管理员密码 = 见 ~/soduwork-local-evidence/admin_password.txt
+数据目录 = ~/.local/share/soduwork/source-service
+
+== 探针结论 ==
+========================================================================
+SoduWork 管理 API 实测（本地实例）
+目标 = http://127.0.0.1:18989
+========================================================================
+[PASS] [1] POST /api/v1/admin/login（鉴权入口）: 实测=200 期望=200  token 已获取，长度 233
+[PASS] [2] GET /api/v1/admin/model-providers（带 token）: 实测=404 期望=404  源码依据 admin.py:1361/1405/1430/1449（PUT/DELETE/POST）
+[PASS] [2] GET /api/v1/admin/model-defs（带 token）: 实测=404 期望=404  源码依据 admin.py:1478/1540（PUT/DELETE）
+[PASS] [3] GET /api/v1/admin/model-catalog（带 token）: 实测=200 期望=200  源码依据 admin.py:1355
+       内置服务商数量 = 10
+         - company | 共享模型服务
+         - openai-compat | OpenAI 兼容（通用）
+         - volcengine | 字节跳动 · 火山引擎方舟
+         - deepseek | DeepSeek
+         - aliyun | 阿里云百炼（通义）
+         - zhipu | 智谱 GLM
+         - moonshot | 月之暗面 Kimi
+         - openai | OpenAI
+         - anthropic | Anthropic Claude
+         - google | Google Gemini
+       已配置模型 defs 数量 = 0
+[PASS] [4] GET /api/v1/admin/model-catalog（不带 token）: 实测=401 期望=401  源码依据 require_perm("integration.manage") 依赖
+========================================================================
+结论：4 项全部与源码推断一致（本次运行证伪了我最初的 2 处路由推断）。
+
+== 自检结论 ==
+===== 上游自带检查（upstream commit 5a60c86697bcde25548c4277ba585b71f31c9338）=====
+
+----- A. 启动器单元测试：python -m unittest tools.dev.test_start_local -----
+python -m unittest: error: This fixture requires an isolated source verification directory on macOS
+.....桌面运行环境下载最多等待 10 分钟 / Electron download allows up to 10 minutes. If GitHub is unreachable, configure ELECTRON_MIRROR or your proxy and retry.
+................桌面运行环境下载最多等待 10 分钟 / Electron download allows up to 10 minutes. If GitHub is unreachable, configure ELECTRON_MIRROR or your proxy and retry.
+.首次创建管理员 / Create the administrator account: owner
+首次创建管理员 / Create the administrator account: owner
+...Install fixture
+  完成 / Done (0.0s)
+.................................s....数据目录 / Data directory: /tmp/soduwork-start-unit-66pm9lhs/service
+详细日志 / Detailed log: /tmp/soduwork-start-unit-66pm9lhs/service/startup.log
+首次启动需要联网下载依赖，可能需要数分钟。已完成的步骤会复用，请勿重复启动。
+First setup downloads dependencies and can take several minutes. Completed steps are reused.
+................Preparation complete. Run the same command without --prepare-only to start SoduWork.
+Download fixture
+Retry fixture
+  完成 / Done (0.0s)
+......s.................
+----------------------------------------------------------------------
+Ran 123 tests in 2.848s
+
+OK (skipped=2)
+A 退出码 = 0
+
+----- B. 公开源清单：node tools/check-public-source.cjs -----
+{
+  "ok": true,
+  "profile": "opensource-v1",
+  "files": 5107,
+  "skills": 38,
+  "errors": []
+}
+B 退出码 = 0

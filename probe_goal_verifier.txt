@@ -1,0 +1,89 @@
+==============================================================================
+SoduWork 确定性门禁（goal-verifier.js）真实实测
+被测模块 = ~/SoduWork/client/main/conversation/goal-verifier.js
+上游 commit = 5a60c86697bcde25548c4277ba585b71f31c9338
+==============================================================================
+
+[用例 1] 文档任务却交网页
+  期望：delivery_type = FAIL
+  实际：与预期一致　overall.pass=false　summary=确定性交付验收未通过
+  详情：缺少 document/pdf，实际为 website
+  逐项：
+    [PASS] mutation               真实改动
+    [PASS] verification           可重放验证
+    [PASS] execution_errors       无未解决执行错误
+    [PASS] launch                 真实启动与健康探针
+    [PASS] visual                 界面与关键旅程实查
+    [PASS] delivery_manifest      可核验交付清单
+    [PASS] deliverables           最终成果存在
+    [FAIL] delivery_type          交付物类型与目标一致　→ 缺少 document/pdf，实际为 website
+    [PASS] artifact_integrity     交付物格式与内容有效
+    [PASS] website_package_1      网站运行资源完整
+
+[用例 2] 网站引用缺失的本地资源
+  期望：website_package_1 = FAIL
+  实际：与预期一致　overall.pass=false　summary=确定性交付验收未通过
+  详情：存在缺失的本地资源：missing.js
+  逐项：
+    [PASS] mutation               真实改动
+    [PASS] verification           可重放验证
+    [PASS] execution_errors       无未解决执行错误
+    [PASS] launch                 真实启动与健康探针
+    [PASS] visual                 界面与关键旅程实查
+    [PASS] delivery_manifest      可核验交付清单
+    [PASS] deliverables           最终成果存在
+    [PASS] delivery_type          交付物类型与目标一致
+    [PASS] artifact_integrity     交付物格式与内容有效
+    [FAIL] website_package_1      网站运行资源完整　→ 存在缺失的本地资源：missing.js
+
+[用例 3] 超大文本文件(>2MB)里的坏引用是否被查出
+  期望：website_package_1 = PASS（该文件因超过 MAX_TEXT_BYTES 被跳过扫描，坏引用漏检）
+  实际：与预期一致　overall.pass=true　summary=确定性交付验收已通过
+  详情：（通过，无缺口）
+  逐项：
+    [PASS] mutation               真实改动
+    [PASS] verification           可重放验证
+    [PASS] execution_errors       无未解决执行错误
+    [PASS] launch                 真实启动与健康探针
+    [PASS] visual                 界面与关键旅程实查
+    [PASS] delivery_manifest      可核验交付清单
+    [PASS] deliverables           最终成果存在
+    [PASS] delivery_type          交付物类型与目标一致
+    [PASS] artifact_integrity     交付物格式与内容有效
+    [PASS] website_package_1      网站运行资源完整
+
+[用例 4] 站点文件数超过 120 时，超限部分的坏引用是否被查出
+  期望：website_package_1 = PASS（遍历在 120 个文件处封顶，后续文件不被扫描，坏引用漏检）
+  实际：与预期一致　overall.pass=true　summary=确定性交付验收已通过
+  详情：（通过，无缺口）
+  逐项：
+    [PASS] mutation               真实改动
+    [PASS] verification           可重放验证
+    [PASS] execution_errors       无未解决执行错误
+    [PASS] launch                 真实启动与健康探针
+    [PASS] visual                 界面与关键旅程实查
+    [PASS] delivery_manifest      可核验交付清单
+    [PASS] deliverables           最终成果存在
+    [PASS] delivery_type          交付物类型与目标一致
+    [PASS] artifact_integrity     交付物格式与内容有效
+    [PASS] website_package_1      网站运行资源完整
+
+[用例 5] 干净的网站交付（正对照）
+  期望：全部检查项 PASS
+  实际：与预期一致　overall.pass=true　summary=确定性交付验收已通过
+  详情：确定性交付验收已通过
+  逐项：
+    [PASS] mutation               真实改动
+    [PASS] verification           可重放验证
+    [PASS] execution_errors       无未解决执行错误
+    [PASS] launch                 真实启动与健康探针
+    [PASS] visual                 界面与关键旅程实查
+    [PASS] delivery_manifest      可核验交付清单
+    [PASS] deliverables           最终成果存在
+    [PASS] delivery_type          交付物类型与目标一致
+    [PASS] artifact_integrity     交付物格式与内容有效
+    [PASS] website_package_1      网站运行资源完整
+
+==============================================================================
+结论：5 个用例全部与预期一致。
+==============================================================================

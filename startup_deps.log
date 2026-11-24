@@ -1,0 +1,43 @@
+=== SoduWork 本机依赖安装日志（节选：索引源 + 前若干包）===
+# 提取自 ~/.local/share/soduwork/source-service/startup.log（用户主目录路径已脱敏）
+
+
+--- [1/4] 创建独立环境 / Creating a private Python environment ---
+
+--- [2/4] 安装服务依赖 / Installing server dependencies (first run needs internet) ---
+Looking in indexes: https://mirrors.aliyun.com/pypi/simple
+Ignoring standard-xdrlib: markers 'python_version >= "3.13"' don't match your environment
+Ignoring pywinpty: markers 'sys_platform == "win32"' don't match your environment
+Ignoring pywinpty: markers 'sys_platform == "win32"' don't match your environment
+Collecting fastapi<0.144,>=0.136 (from -r ~/SoduWork/hub-backend/requirements.txt (line 3))
+  Downloading https://mirrors.aliyun.com/pypi/packages/eb/4e/5f7d1268900eb14a6697a42d94c8f7e3b8450d27301761f231672f928419/fastapi-0.143.5-py3-none-any.whl (144 kB)
+Collecting uvicorn<0.35,>=0.34 (from uvicorn[standard]<0.35,>=0.34->-r ~/SoduWork/hub-backend/requirements.txt (line 4))
+  Downloading https://mirrors.aliyun.com/pypi/packages/6d/0d/8adfeaa62945f90d19ddc461c55f4a50c258af7662d34b6a3d5d1f8646f6/uvicorn-0.34.3-py3-none-any.whl (62 kB)
+Collecting sqlalchemy<2.1,>=2.0 (from sqlalchemy[asyncio]<2.1,>=2.0->-r ~/SoduWork/hub-backend/requirements.txt (line 5))
+  Downloading https://mirrors.aliyun.com/pypi/packages/cd/b8/85f6ee0ee2c9075f20ea2d9c698ab5bc734336ae89105026e153d07d12e3/sqlalchemy-2.0.58-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (3.5 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.5/3.5 MB 254.4 kB/s eta 0:00:00
+Collecting alembic<2,>=1.14 (from -r ~/SoduWork/hub-backend/requirements.txt (line 6))
+  Downloading https://mirrors.aliyun.com/pypi/packages/11/3c/8740f5b4e1bd57333e4f84265b9b6363da4f7cf70f5622dd1e2fde7a0bd5/alembic-1.20.1-py3-none-any.whl (270 kB)
+Collecting aiosqlite>=0.20 (from -r ~/SoduWork/hub-backend/requirements.txt (line 7))
+  Downloading https://mirrors.aliyun.com/pypi/packages/00/b7/e3bf5133d697a08128598c8d0abc5e16377b51465a33756de24fa7dee953/aiosqlite-0.22.1-py3-none-any.whl (17 kB)
+Collecting asyncpg>=0.30 (from -r ~/SoduWork/hub-backend/requirements.txt (line 8))
+  Downloading https://mirrors.aliyun.com/pypi/packages/30/30/4fd8d1155b3d7a32a2c241dcb9c5d9e9bd74a59ae71ed25ef8ddb8e038e1/asyncpg-0.32.0-cp312-cp312-manylinux_2_28_x86_64.whl (3.8 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.8/3.8 MB 234.9 kB/s eta 0:00:00
+Collecting redis<6,>=5.2 (from -r ~/SoduWork/hub-backend/requirements.txt (line 10))
+  Downloading https://mirrors.aliyun.com/pypi/packages/7f/26/5c5fa0e83c3621db835cfc1f1d789b37e7fa99ed54423b5f519beb931aa7/redis-5.3.1-py3-none-any.whl (272 kB)
+Collecting pydantic<3,>=2.10 (from -r ~/SoduWork/hub-backend/requirements.txt (line 11))
+  Downloading https://mirrors.aliyun.com/pypi/packages/8a/8c/824a686c4ba815ddb0722f9e66272088bccd4e1ae1d2f7015375e4a4fc7f/pydantic-2.14.4-py3-none-any.whl (494 kB)
+Collecting pydantic-settings>=2.6 (from -r ~/SoduWork/hub-backend/requirements.txt (line 12))
+  Downloading https://mirrors.aliyun.com/pypi/packages/4c/26/3e68379ca313b6aa58e11fbd8b28d5c6f1b9f4428d70222ba021a76797ec/pydantic_settings-2.16.3-py3-none-any.whl (82 kB)
+Collecting python-dotenv>=1.0 (from -r ~/SoduWork/hub-backend/requirements.txt (line 13))
+  Downloading https://mirrors.aliyun.com/pypi/packages/60/d1/38f3a3405989a89ac18390803e70c6ad7c7760da4f9b83cbeca0c44a0c72/python_dotenv-1.2.4-py3-none-any.whl (23 kB)
+Collecting python-multipart>=0.0.9 (from -r ~/SoduWork/hub-backend/requirements.txt (line 14))
+  Downloading https://mirrors.aliyun.com/pypi/packages/f5/0e/090c52b122d8ec5fa37942c1410fea9cf04ce98bca0c84dde7f0aa11594d/python_multipart-0.0.34-py3-none-any.whl (32 kB)
+Collecting tzdata>=2025.2 (from -r ~/SoduWork/hub-backend/requirements.txt (line 15))
+  Downloading https://mirrors.aliyun.com/pypi/packages/0a/66/9a06c2227fedfd4919f0eaaa8b94377d9730882a7e4f95823c9a331ab5e1/tzdata-2026.6-py2.py3-none-any.whl (348 kB)
+Collecting minio>=7.2 (from -r ~/SoduWork/hub-backend/requirements.txt (line 16))
+  Downloading https://mirrors.aliyun.com/pypi/packages/3e/9a/b697530a882588a84db616580f2ba5d1d515c815e11c30d219145afeec87/minio-7.2.20-py3-none-any.whl (93 kB)
+Collecting pyNfsClient==0.1.5 (from -r ~/SoduWork/hub-backend/requirements.txt (line 18))
+  Downloading https://mirrors.aliyun.com/pypi/packages/d0/2b/50136d18595dc478eb5e9418a1021d590a034fd3ac19f523eadc371d0270/pyNfsClient-0.1.5-py2.py3-none-any.whl (36 kB)
+Collecting nfs-rs==0.8.6 (from -r ~/SoduWork/hub-backend/requirements.txt (line 22))
+  Downloading https://mirrors.aliyun.com/pypi/packages/82/02/0ce4d16e0c60522982ac3d4b2eb060ddcaee20d64f54e8fe9b8bc83c0d18/nfs_rs-0.8.6-cp311-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (3.5 MB)

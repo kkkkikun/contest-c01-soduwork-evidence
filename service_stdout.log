@@ -1,0 +1,18 @@
+数据目录 / Data directory: ~/.local/share/soduwork/source-service
+详细日志 / Detailed log: ~/.local/share/soduwork/source-service/startup.log
+首次启动需要联网下载依赖，可能需要数分钟。已完成的步骤会复用，请勿重复启动。
+First setup downloads dependencies and can take several minutes. Completed steps are reused.
+[Runner] 检查本地运行环境 / Checking the local Runner environment
+  完成 / Done (0.4s)
+正在启动服务并准备数据库 / Starting SoduWork and applying database migrations...
+
+SoduWork is ready: http://127.0.0.1:18989
+Administrator: admin
+Data and logs: ~/.local/share/soduwork/source-service
+Keep this window open. Press Ctrl+C to stop.
+启动成功！管理页面：http://127.0.0.1:18989
+登录账号：admin；密码为刚才自己设置的密码。
+请保持此窗口打开；下次仍运行同一个启动文件。
+下一步：管理页面 → 能力配置 → 模型目录，添加自己的模型服务。
+Next: management UI → Capabilities → Model catalog. Add your own model service before using AI.
+

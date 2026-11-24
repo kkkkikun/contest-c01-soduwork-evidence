@@ -1,0 +1,15 @@
+=== 二次 prepare（依赖指纹复用验证）===
+命令: sh start.sh --prepare-only --data-dir ~/.local/share/soduwork/source-service
+数据目录已存在完整依赖与构建产物（首次安装耗时 342.0s + 9.2s + 10.8s）
+
+数据目录 / Data directory: ~/.local/share/soduwork/source-service
+详细日志 / Detailed log: ~/.local/share/soduwork/source-service/startup.log
+首次启动需要联网下载依赖，可能需要数分钟。已完成的步骤会复用，请勿重复启动。
+First setup downloads dependencies and can take several minutes. Completed steps are reused.
+[Runner] 检查本地运行环境 / Checking the local Runner environment
+  完成 / Done (0.4s)
+Preparation complete. Run the same command without --prepare-only to start SoduWork.
+
+real	0m1.866s
+user	0m1.408s
+sys	0m0.326s

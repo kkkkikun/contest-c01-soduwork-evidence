@@ -1,0 +1,23 @@
+========================================================================
+SoduWork 管理 API 实测（本地实例）
+目标 = http://127.0.0.1:18989
+========================================================================
+[PASS] [1] POST /api/v1/admin/login（鉴权入口）: 实测=200 期望=200  token 已获取，长度 233
+[PASS] [2] GET /api/v1/admin/model-providers（带 token）: 实测=404 期望=404  源码依据 admin.py:1361/1405/1430/1449（PUT/DELETE/POST）
+[PASS] [2] GET /api/v1/admin/model-defs（带 token）: 实测=404 期望=404  源码依据 admin.py:1478/1540（PUT/DELETE）
+[PASS] [3] GET /api/v1/admin/model-catalog（带 token）: 实测=200 期望=200  源码依据 admin.py:1355
+       内置服务商数量 = 10
+         - company | 共享模型服务
+         - openai-compat | OpenAI 兼容（通用）
+         - volcengine | 字节跳动 · 火山引擎方舟
+         - deepseek | DeepSeek
+         - aliyun | 阿里云百炼（通义）
+         - zhipu | 智谱 GLM
+         - moonshot | 月之暗面 Kimi
+         - openai | OpenAI
+         - anthropic | Anthropic Claude
+         - google | Google Gemini
+       已配置模型 defs 数量 = 0
+[PASS] [4] GET /api/v1/admin/model-catalog（不带 token）: 实测=401 期望=401  源码依据 require_perm("integration.manage") 依赖
+========================================================================
+结论：4 项全部与源码推断一致（本次运行证伪了我最初的 2 处路由推断）。
