@@ -48,12 +48,16 @@ python3 probe_admin_api.py --base http://127.0.0.1:18989 --user admin --password
 在本包作者本人的机器上，这三条 `diff` 均为**空输出**（完全一致），三个探针退出码均为 0。
 `probe_admin_api.py` 需要本地 Hub 处于运行状态；两个 `.js` 探针不需要模型 API Key，也不需要 Hub。
 
+> ⚠️ **这条 `diff` 声明只覆盖上面三个探针**。`upstream_selfcheck.txt` **本质上不可逐字复现**——
+> 它里面有 unittest 每次随机生成的临时目录名（`/tmp/soduwork-start-unit-XXXX`）
+> 和随运行浮动的测试耗时。那份文件核对的是**结论**（123 项 OK、公开源清单 `ok:true`），不是**字符**。
+
 ## 二、文件清单
 
 | 文件 | 内容 |
 |---|---|
 | `local_run.log` | 完整运行日志：克隆 → 预装 → 启动 → 探针 → 自检 → 门禁实测 → 汇总 |
-| `local_run_reuse_prepare.txt` | 同一数据目录上**二次 `--prepare-only`** 的输出（两次实测 **1.866s / 3.171s**，四步安装全部跳过 —— 依赖指纹复用的实证） |
+| `local_run_reuse_prepare.txt` | 同一数据目录上**二次 `--prepare-only`** 的输出（**同日两次独立实测：1.887s 与 1.842s**，四步安装全部跳过 —— 依赖指纹复用的实证） |
 | `startup_deps.log` | 首次安装的依赖下载日志节选（索引源为 `mirrors.aliyun.com/pypi/simple`，路径已脱敏） |
 | `service_stdout.log` | Hub 启动 stdout，含 `SoduWork is ready: http://127.0.0.1:18989` |
 | `probe_admin_api.txt` | 管理 API 探针逐条输出（**5 条断言**：200 / 404 / 404 / 200 / 401 + 10 家内置服务商清单） |
@@ -75,7 +79,7 @@ python3 probe_admin_api.py --base http://127.0.0.1:18989 --user admin --password
 | Fork | `https://github.com/kkkkikun/SoduWork`（父仓库 `https://github.com/mdiri-ai/SoduWork`） |
 | 取证 commit | `5a60c86697bcde25548c4277ba585b71f31c9338` |
 | Hub 地址 | `http://127.0.0.1:18989`（回环，未对外暴露） |
-| 取证时间 | 2026-11-24 12:00–12:16 +08:00（首次安装与启动）；13:5x–14:0x 复跑刷新全部产物 |
+| 取证时间 | 2026-11-24 **12:00–12:08** +08:00（首次安装与启动）；**13:5x–14:0x 复跑刷新全部产物** |
 
 ## 四、诚实边界
 

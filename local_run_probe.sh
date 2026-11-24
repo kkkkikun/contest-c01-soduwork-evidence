@@ -11,9 +11,10 @@
 #   1) 克隆 Fork（github.com/kkkkikun/SoduWork）
 #   2) sh start.sh --prepare-only   → 装依赖 + 构建管理台
 #   3) sh start.sh --password-stdin → 启动本地 Hub（默认 127.0.0.1:18989）
-#   4) 管理 API 取证（4 项探针，对应源码行）
+#   4) 管理 API 取证（5 条断言，对应源码行）
 #   5) 跑上游仓库自带的自检套件（launcher 123 项 + 公开源清单）
-#   6) 打印「该截哪 4 张图」清单
+#   6) 实跑上游的确定性门禁（8 用例）与独立复核协议层（6 用例）——两项都不需要模型 API Key
+#   7) 打印「该截哪 7 张图」清单
 #
 # 用法：
 #   bash source/local_run_probe.sh
@@ -36,11 +37,12 @@ STATE_DIR="${SODU_DATA_DIR:-$HOME/.local/share/soduwork/source-service}"
 OUT_DIR="${SODU_OUT_DIR:-$HOME/soduwork-local-evidence}"
 SCRIPT_DIR="$(cd "$(dirname -- "$0")" && pwd)"
 PROBE_PY="$SCRIPT_DIR/probe_admin_api.py"
-[ -f "$PROBE_PY" ] || die "找不到探针脚本 $PROBE_PY（脚本目录定位错误）"
 
 STEP=0
 step() { STEP=$((STEP + 1)); printf '\n\033[1m===== [步骤 %d] %s =====\033[0m\n' "$STEP" "$1"; }
 die()  { printf '\n\033[31m[失败] %s\033[0m\n' "$1" >&2; exit 1; }
+
+[ -f "$PROBE_PY" ] || die "找不到探针脚本 $PROBE_PY（脚本目录定位错误）"
 
 mkdir -p "$OUT_DIR"
 OUT_DIR="$(cd "$OUT_DIR" && pwd)"
@@ -183,6 +185,10 @@ say "探针退出码 = $PROBE_RC（输出见 $PROBE_OUT）"
 step "跑上游仓库自带的自检套件"
 CHECK_OUT="$OUT_DIR/upstream_selfcheck.txt"
 VENV_PY="$STATE_DIR/venv/bin/python"
+# 注意：这个 { } 块被管道给 tee，会跑在子 shell 里，块内变量出不来。
+# 所以退出码要落到临时文件，块外再读回来 —— 否则总判定会漏掉上游自检的失败。
+A_RC_FILE="$OUT_DIR/.selfcheck_a_rc"
+B_RC_FILE="$OUT_DIR/.selfcheck_b_rc"
 {
   echo "===== 上游自带检查（upstream commit $FORK_COMMIT）====="
   echo
@@ -192,9 +198,11 @@ VENV_PY="$STATE_DIR/venv/bin/python"
     "$VENV_PY" -m unittest tools.dev.test_start_local 2>&1 | tail -20
     A_RC="${PIPESTATUS[0]}"
     set -e
+    echo "$A_RC" > "$A_RC_FILE"
     echo "A 退出码 = $A_RC"
   else
     echo "跳过：找不到 venv 解释器 $VENV_PY"
+    echo "125" > "$A_RC_FILE"
   fi
   echo
   echo "----- B. 公开源清单：node tools/check-public-source.cjs -----"
@@ -203,11 +211,17 @@ VENV_PY="$STATE_DIR/venv/bin/python"
     node tools/check-public-source.cjs 2>&1 | tail -20
     B_RC="${PIPESTATUS[0]}"
     set -e
+    echo "$B_RC" > "$B_RC_FILE"
     echo "B 退出码 = $B_RC"
   else
     echo "跳过：没有 node"
+    echo "125" > "$B_RC_FILE"
   fi
 } 2>&1 | tee "$CHECK_OUT"
+A_RC="$(cat "$A_RC_FILE" 2>/dev/null || echo 125)"
+B_RC="$(cat "$B_RC_FILE" 2>/dev/null || echo 125)"
+rm -f "$A_RC_FILE" "$B_RC_FILE"
+say "上游自检退出码：A=$A_RC · B=$B_RC"
 
 # ---------------------------------------------------------------- 步骤 5b 门禁实测
 step "实跑上游的确定性门禁与独立复核协议层（两项都不需要模型 API Key）"
@@ -310,6 +324,8 @@ RC=0
 [ "${PROBE_RC:-1}" = "0" ] || { say "⚠ 管理 API 探针存在不符项（退出码 $PROBE_RC）—— 以实测值为准，不要改预期凑数。"; RC=1; }
 [ "${GATE_RC:-1}" = "0" ]  || { say "⚠ 确定性门禁探针存在不符项（退出码 $GATE_RC）—— 以实测值为准。"; RC=1; }
 [ "${REVIEW_RC:-1}" = "0" ] || { say "⚠ 独立复核协议层探针存在不符项（退出码 $REVIEW_RC）—— 以实测值为准。"; RC=1; }
+[ "${A_RC:-125}" = "0" ]    || { say "⚠ 上游自带启动器单元测试未通过（退出码 $A_RC）—— 以实测值为准。"; RC=1; }
+[ "${B_RC:-125}" = "0" ]    || { say "⚠ 上游公开源清单校验未通过（退出码 $B_RC）—— 以实测值为准。"; RC=1; }
 if [ "$RC" != "0" ]; then
   say "完成，但有探针不符项（退出码 $RC）。"
   exit "$RC"
