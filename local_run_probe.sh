@@ -141,14 +141,33 @@ fi
 # ---------------------------------------------------------------- 步骤 3 启动
 step "启动本地 Hub（sh start.sh --password-stdin）"
 PW_FILE="$OUT_DIR/admin_password.txt"
-if [ -f "$PW_FILE" ]; then
-  PW="$(cat "$PW_FILE")"
-  say "复用已记录的管理员密码（$PW_FILE）"
-else
-  PW="SoduLocal-$(head -c 18 /dev/urandom | base64 | tr -dc 'A-Za-z0-9' | head -c 16)"
-  printf '%s\n' "$PW" > "$PW_FILE"
-  chmod 600 "$PW_FILE"
-  say "已生成管理员密码并保存到 $PW_FILE（权限 600，仅本机可见）"
+if [ -n "${SODU_PASSWORD:-}" ]; then
+  # 显式指定的密码优先（用于复用已在运行的实例时）
+  PW="$SODU_PASSWORD"
+  say "使用 SODU_PASSWORD 环境变量指定的密码"
+elif [ "$ALREADY_RUNNING" = "1" ] && [ ! -f "$PW_FILE" ]; then
+  # 复用「已经在跑的实例」时，管理员密码属于那份实例，不在本次输出目录里
+  # （例如用 SODU_OUT_DIR=/tmp/xxx 做隔离复跑时）。
+  # 这里按优先级去找，找不到就明确报错 —— 绝不能自己生成一个新密码，
+  # 那样登录必然失败，而失败原因还容易被误读成「接口有问题」。
+  for CAND in "$HOME/soduwork-local-evidence/admin_password.txt" "$STATE_DIR/admin_password.txt"; do
+    if [ -f "$CAND" ]; then PW_FILE="$CAND"; break; fi
+  done
+  if [ ! -f "$PW_FILE" ]; then
+    die "实例已在 $BASE 运行，但找不到它的管理员密码文件（已查 $OUT_DIR、$HOME/soduwork-local-evidence、$STATE_DIR）。
+     请用 SODU_PASSWORD 环境变量指定该实例的 admin 密码后重跑。"
+  fi
+fi
+if [ -z "${PW:-}" ]; then
+  if [ -f "$PW_FILE" ]; then
+    PW="$(cat "$PW_FILE")"
+    say "复用已记录的管理员密码（$PW_FILE）"
+  else
+    PW="SoduLocal-$(head -c 18 /dev/urandom | base64 | tr -dc 'A-Za-z0-9' | head -c 16)"
+    printf '%s\n' "$PW" > "$PW_FILE"
+    chmod 600 "$PW_FILE"
+    say "已生成管理员密码并保存到 $PW_FILE（权限 600，仅本机可见）"
+  fi
 fi
 
 BASE="http://127.0.0.1:$PORT"
