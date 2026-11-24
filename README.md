@@ -20,7 +20,7 @@ bash local_run_probe.sh
 1. 从 Fork `https://github.com/kkkkikun/SoduWork.git` 克隆（默认到 `~/SoduWork`）
 2. `sh start.sh --prepare-only` —— 装依赖 + 构建管理台
 3. `sh start.sh --password-stdin` —— 启动本地 Hub（默认 `127.0.0.1:18989`）
-4. `python3 probe_admin_api.py` —— 跑 4 项管理 API 探针
+4. `python3 probe_admin_api.py` —— 跑管理 API 探针（5 条断言）
 5. `python3.12 -m unittest tools.dev.test_start_local` —— 跑上游自带的启动器单元测试
 6. `node tools/check-public-source.cjs` —— 跑上游自带的公开源清单校验
 7. `node probe_goal_verifier.js --repo <repo>` —— 实跑上游确定性门禁（8 个用例，归因闭环）
@@ -33,19 +33,37 @@ bash local_run_probe.sh
 
 可选环境变量：`SODU_PORT`、`SODU_REPO_DIR`、`SODU_DATA_DIR`、`SODU_OUT_DIR`、`SODU_DESKTOP=1`、`SODU_OFFICIAL_MIRROR=1`。
 
+### 单独复跑某一个探针，并与本包里的输出逐字比对
+
+三个探针都可以脱离全链单独跑；它们的输出**不依赖运行者的机器路径**（家目录统一显示成 `~`），
+因此可以直接 `diff`：
+
+```bash
+node probe_goal_verifier.js --repo ~/SoduWork  | diff - probe_goal_verifier.txt
+node probe_goal_review.js  --repo ~/SoduWork  | diff - probe_goal_review.txt
+python3 probe_admin_api.py --base http://127.0.0.1:18989 --user admin --password '<你的密码>' \
+                            | diff - probe_admin_api.txt
+```
+
+在本包作者本人的机器上，这三条 `diff` 均为**空输出**（完全一致），三个探针退出码均为 0。
+`probe_admin_api.py` 需要本地 Hub 处于运行状态；两个 `.js` 探针不需要模型 API Key，也不需要 Hub。
+
 ## 二、文件清单
 
 | 文件 | 内容 |
 |---|---|
-| `local_run.log` | 完整运行日志：克隆 → 预装 → 启动 → 探针 → 自检 → 汇总 |
-| `local_run_reuse_prepare.txt` | 同一数据目录上**二次 `--prepare-only`** 的输出（1.866s，四步安装全部跳过 —— 依赖指纹复用的实证） |
+| `local_run.log` | 完整运行日志：克隆 → 预装 → 启动 → 探针 → 自检 → 门禁实测 → 汇总 |
+| `local_run_reuse_prepare.txt` | 同一数据目录上**二次 `--prepare-only`** 的输出（两次实测 **1.866s / 3.171s**，四步安装全部跳过 —— 依赖指纹复用的实证） |
+| `startup_deps.log` | 首次安装的依赖下载日志节选（索引源为 `mirrors.aliyun.com/pypi/simple`，路径已脱敏） |
 | `service_stdout.log` | Hub 启动 stdout，含 `SoduWork is ready: http://127.0.0.1:18989` |
-| `probe_admin_api.txt` | 4 项管理 API 探针逐条输出（200 / 404 / 404 / 200 / 401 + 10 家内置服务商清单） |
+| `probe_admin_api.txt` | 管理 API 探针逐条输出（**5 条断言**：200 / 404 / 404 / 200 / 401 + 10 家内置服务商清单） |
+| `probe_admin_api.py` | 管理 API 探针脚本本体（仅用 Python 标准库） |
 | `upstream_selfcheck.txt` | 上游启动器 123 项测试 + 公开源清单校验输出 |
+| `probe_goal_verifier.txt` | **确定性门禁 8 个用例的实测输出**（类型门禁拦得住 / 超 2MB 与超 120 文件处漏检 / 对照组与放宽变体验证归因） |
+| `probe_goal_verifier.js` | 确定性门禁实测脚本（直接 require 上游 `goal-verifier.js` 的 `verify()`，**不需要模型 API Key**） |
 | `probe_goal_review.txt` | **独立复核协议层 6 个用例的实测输出**（模型不能覆盖已失败的确定性门禁 · 畸形输出不兜底 · `verdict=pass` 但分数不够被强制降级为 `repair`） |
 | `probe_goal_review.js` | 复核协议层实测脚本（直接 require 上游 `goal-review.js` 的 `outcome()`，**不需要模型 API Key**） |
 | `SUMMARY.txt` | 取证汇总：机器、时间、Fork 地址、取证 commit、服务地址 |
-| `probe_admin_api.py` | 探针脚本本体（仅用 Python 标准库） |
 | `local_run_probe.sh` | 「一条命令跑完全流程」的封装脚本 |
 
 ## 三、取证环境
@@ -57,7 +75,7 @@ bash local_run_probe.sh
 | Fork | `https://github.com/kkkkikun/SoduWork`（父仓库 `https://github.com/mdiri-ai/SoduWork`） |
 | 取证 commit | `5a60c86697bcde25548c4277ba585b71f31c9338` |
 | Hub 地址 | `http://127.0.0.1:18989`（回环，未对外暴露） |
-| 取证时间 | 2026-11-24 12:00–12:08 +08:00 |
+| 取证时间 | 2026-11-24 12:00–12:16 +08:00（首次安装与启动）；13:5x–14:0x 复跑刷新全部产物 |
 
 ## 四、诚实边界
 
@@ -71,5 +89,5 @@ bash local_run_probe.sh
 
 ## 五、许可
 
-本证据包中的脚本（`probe_admin_api.py`、`local_run_probe.sh`）与日志可自由引用与复跑。
+本证据包中的脚本（`probe_admin_api.py`、`local_run_probe.sh`、`probe_goal_verifier.js`、`probe_goal_review.js`）与日志可自由引用与复跑。
 SoduWork 本体版权归 MDiRi 所有，遵循 MIT 协议。

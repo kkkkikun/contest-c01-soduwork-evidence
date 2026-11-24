@@ -8,8 +8,8 @@ python -m unittest: error: This fixture requires an isolated source verification
 首次创建管理员 / Create the administrator account: owner
 ...Install fixture
   完成 / Done (0.0s)
-.................................s....数据目录 / Data directory: /tmp/soduwork-start-unit-rh6_weel/service
-详细日志 / Detailed log: /tmp/soduwork-start-unit-rh6_weel/service/startup.log
+.................................s....数据目录 / Data directory: /tmp/soduwork-start-unit-uy7e_tge/service
+详细日志 / Detailed log: /tmp/soduwork-start-unit-uy7e_tge/service/startup.log
 首次启动需要联网下载依赖，可能需要数分钟。已完成的步骤会复用，请勿重复启动。
 First setup downloads dependencies and can take several minutes. Completed steps are reused.
 ................Preparation complete. Run the same command without --prepare-only to start SoduWork.
@@ -18,7 +18,7 @@ Retry fixture
   完成 / Done (0.0s)
 ......s.................
 ----------------------------------------------------------------------
-Ran 123 tests in 2.908s
+Ran 123 tests in 2.854s
 
 OK (skipped=2)
 A 退出码 = 0

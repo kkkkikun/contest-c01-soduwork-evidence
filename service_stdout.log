@@ -3,7 +3,7 @@
 首次启动需要联网下载依赖，可能需要数分钟。已完成的步骤会复用，请勿重复启动。
 First setup downloads dependencies and can take several minutes. Completed steps are reused.
 [Runner] 检查本地运行环境 / Checking the local Runner environment
-  完成 / Done (0.4s)
+  完成 / Done (0.3s)
 正在启动服务并准备数据库 / Starting SoduWork and applying database migrations...
 
 SoduWork is ready: http://127.0.0.1:18989

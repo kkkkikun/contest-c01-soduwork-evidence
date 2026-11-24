@@ -86,10 +86,10 @@ def main() -> int:
         return 1
 
     # [2][3] 源码里不存在的 GET 路由 -> 404
-    for path, src in (("/model-providers", "admin.py:1361/1405/1430/1449（PUT/DELETE/POST）"),
-                      ("/model-defs", "admin.py:1478/1540（PUT/DELETE）")):
+    for path, src, tag in (("/model-providers", "admin.py:1361/1405/1430/1449（PUT/DELETE/POST）", "[2a]"),
+                           ("/model-defs", "admin.py:1478/1540（PUT/DELETE）", "[2b]")):
         status, text = request("GET", base + ADMIN + path, token=token)
-        check(f"[2] GET /api/v1/admin{path}（带 token）", status, 404,
+        check(f"{tag} GET /api/v1/admin{path}（带 token）", status, 404,
               f"源码依据 {src}")
 
     # [4] 真实存在的 GET 路由 -> 200，且内置服务商 10 家
@@ -124,7 +124,8 @@ def main() -> int:
     if failures:
         print(f"结论：{failures} 项与预期不符 —— 以实测值为准，不要改预期凑数。")
         return 1
-    print("结论：4 项全部与源码推断一致（本次运行证伪了我最初的 2 处路由推断）。")
+    print("结论：5 条断言全部与源码推断一致（脚本按 4 组编号，model-providers 与 model-defs 同属第 2 组；"
+          "本次运行证伪了我最初的 2 处路由推断）。")
     return 0
 
 

@@ -123,3 +123,61 @@ commit 5a60c86697bcde25548c4277ba585b71f31c9338
 复核协议层探针退出码 = 0
 汇总已写入 ~/soduwork-local-evidence/SUMMARY.txt
 完成。退出码 0。
+SoduWork 本机取证脚本 —— 开始
+时间 = 2026-11-24T13:58:37+08:00
+输出目录 = ~/soduwork-local-evidence
+仓库目录 = ~/SoduWork
+数据目录 = ~/.local/share/soduwork/source-service
+Python = ~/.local/bin/python3.12 (Python 3.12.13)
+Node = v22.21.1
+可用磁盘 = 581G（首次安装需要约 3-5 GB）
+已存在，跳过克隆：~/SoduWork
+--- git remote -v ---
+origin	https://github.com/kkkkikun/SoduWork.git (fetch)
+origin	https://github.com/kkkkikun/SoduWork.git (push)
+--- git log -1 ---
+commit 5a60c86697bcde25548c4277ba585b71f31c9338
+作者 yong.zhang <747299003@qq.com>
+日期 Sun Nov 22 21:26:39 2026 +0800
+取证 commit = 5a60c86697bcde25548c4277ba585b71f31c9338
+首次运行需联网下载依赖，可能 3-10 分钟。
+检测到 http://127.0.0.1:18989 已在运行，跳过 prepare（数据目录已被运行中的实例锁定）。
+复用已记录的管理员密码（~/soduwork-local-evidence/admin_password.txt）
+复用已在运行的实例：http://127.0.0.1:18989
+服务就绪：http://127.0.0.1:18989
+探针退出码 = 0（输出见 ~/soduwork-local-evidence/probe_admin_api.txt）
+运行确定性门禁探针（8 个用例）→ ~/soduwork-local-evidence/probe_goal_verifier.txt
+门禁探针退出码 = 0
+运行独立复核协议层探针（6 个用例）→ ~/soduwork-local-evidence/probe_goal_review.txt
+复核协议层探针退出码 = 0
+汇总已写入 ~/soduwork-local-evidence/SUMMARY.txt
+完成。退出码 0。
+SoduWork 本机取证脚本 —— 开始
+时间 = 2026-11-24T14:00:32+08:00
+输出目录 = ~/soduwork-local-evidence
+仓库目录 = ~/SoduWork
+数据目录 = ~/.local/share/soduwork/source-service
+Python = ~/.local/bin/python3.12 (Python 3.12.13)
+Node = v22.21.1
+可用磁盘 = 581G（首次安装需要约 3-5 GB）
+已存在，跳过克隆：~/SoduWork
+--- git remote -v ---
+origin	https://github.com/kkkkikun/SoduWork.git (fetch)
+origin	https://github.com/kkkkikun/SoduWork.git (push)
+--- git log -1 ---
+commit 5a60c86697bcde25548c4277ba585b71f31c9338
+作者 yong.zhang <747299003@qq.com>
+日期 Sun Nov 22 21:26:39 2026 +0800
+取证 commit = 5a60c86697bcde25548c4277ba585b71f31c9338
+首次运行需联网下载依赖，可能 3-10 分钟。
+检测到 http://127.0.0.1:18989 已在运行，跳过 prepare（数据目录已被运行中的实例锁定）。
+复用已记录的管理员密码（~/soduwork-local-evidence/admin_password.txt）
+复用已在运行的实例：http://127.0.0.1:18989
+服务就绪：http://127.0.0.1:18989
+探针退出码 = 0（输出见 ~/soduwork-local-evidence/probe_admin_api.txt）
+运行确定性门禁探针（8 个用例）→ ~/soduwork-local-evidence/probe_goal_verifier.txt
+门禁探针退出码 = 0
+运行独立复核协议层探针（6 个用例）→ ~/soduwork-local-evidence/probe_goal_review.txt
+复核协议层探针退出码 = 0
+汇总已写入 ~/soduwork-local-evidence/SUMMARY.txt
+完成。退出码 0。

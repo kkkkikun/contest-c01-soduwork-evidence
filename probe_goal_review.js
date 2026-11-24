@@ -33,6 +33,11 @@ const repoArg = (() => {
 const REPO = path.resolve(
   repoArg || process.env.SODU_REPO || path.join(os.homedir(), 'SoduWork'));
 const MODULE_PATH = path.join(REPO, 'client', 'main', 'conversation', 'goal-review.js');
+/** 输出里只显示 ~ 形式的家目录路径，使结果与「谁在哪台机器上跑」无关，便于逐字复现 */
+const disp = (p) => {
+  const home = os.homedir();
+  return p.startsWith(home) ? '~' + p.slice(home.length) : p;
+};
 
 if (!fs.existsSync(MODULE_PATH)) {
   console.error(`找不到被测模块：${MODULE_PATH}`);
@@ -165,7 +170,7 @@ addCase({
 /* -------------------------------------------------------------------- 主流程 */
 console.log('='.repeat(78));
 console.log('SoduWork 独立复核协议层（goal-review.js · outcome）真实实测');
-console.log(`被测模块 = ${MODULE_PATH}`);
+console.log(`被测模块 = ${disp(MODULE_PATH)}`);
 console.log(`上游 commit = ${COMMIT}`);
 console.log('边界：本脚本测协议层的判定与阻断逻辑，不测模型输出质量。');
 console.log('='.repeat(78));

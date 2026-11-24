@@ -7,9 +7,9 @@
 首次启动需要联网下载依赖，可能需要数分钟。已完成的步骤会复用，请勿重复启动。
 First setup downloads dependencies and can take several minutes. Completed steps are reused.
 [Runner] 检查本地运行环境 / Checking the local Runner environment
-  完成 / Done (0.4s)
+  完成 / Done (0.5s)
 Preparation complete. Run the same command without --prepare-only to start SoduWork.
 
-real	0m1.866s
-user	0m1.408s
-sys	0m0.326s
+real	0m3.171s
+user	0m1.768s
+sys	0m0.511s
