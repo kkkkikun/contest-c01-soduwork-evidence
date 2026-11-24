@@ -15,6 +15,18 @@
 bash local_run_probe.sh
 ```
 
+**想用隔离输出目录做一次不污染本包的复跑**，用 `SODU_OUT_DIR`：
+
+```bash
+SODU_OUT_DIR=/tmp/c01_verify bash local_run_probe.sh
+```
+
+复用「已经在跑的实例」时，脚本会自动去找**该实例**的密码文件
+（输出目录 → `~/soduwork-local-evidence` → 数据目录），找不到就明确报错；
+也可以用 `SODU_PASSWORD=<密码>` 显式指定。
+
+> **实测**：隔离复跑退出码 **0**，且三个探针的 `.txt` 与本包里的**逐字节相同**。
+
 在任意一台装了 **Python 3.12+** 与 **Node.js 22.19+** 的机器上执行本目录下的脚本，它会依次完成：
 
 1. 从 Fork `https://github.com/kkkkikun/SoduWork.git` 克隆（默认到 `~/SoduWork`）
