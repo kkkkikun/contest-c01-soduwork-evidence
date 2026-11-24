@@ -1,0 +1,45 @@
+==============================================================================
+SoduWork 独立复核协议层（goal-review.js · outcome）真实实测
+被测模块 = ~/SoduWork/client/main/conversation/goal-review.js
+上游 commit = 5a60c86697bcde25548c4277ba585b71f31c9338
+边界：本脚本测协议层的判定与阻断逻辑，不测模型输出质量。
+==============================================================================
+
+[用例 1] 确定性门禁已失败 + 独立复核 verdict=pass
+  期望：phase=blocked 且 source=deterministic-verifier（模型不能覆盖已失败的确定性门禁）
+  实际：与预期一致
+  详情：phase=blocked source=deterministic-verifier reason=缺少 document/pdf，实际为 website
+  缺口：delivery_type → 缺少 document/pdf，实际为 website
+
+[用例 2] 确定性门禁通过 + 独立复核返回畸形 JSON
+  期望：phase=blocked 且 source=verifier-protocol（畸形输入不被兜底成通过）
+  实际：与预期一致
+  详情：phase=blocked source=verifier-protocol reason=独立复核没有返回可解析的结构化结论
+  缺口：verifier_protocol → missing json object
+
+[用例 3] verdict=pass 但缺少一个评分维度
+  期望：phase=blocked 且 source=verifier-protocol（缺字段不能放行）
+  实际：与预期一致
+  详情：phase=blocked source=verifier-protocol reason=独立复核缺少完整质量评分：completeness
+  缺口：verifier_scores → 未评分维度：completeness
+
+[用例 4] verdict=pass 但综合分只有 59 分（门槛 85）
+  期望：phase=blocked 且 source=independent-verifier（模型说 pass 会被强制降级为 repair）
+  实际：与预期一致
+  详情：phase=blocked source=independent-verifier reason=我认为可以过
+  缺口：quality:correctness → 正确性 60 分，低于门槛 80 分；quality:completeness → 完整性 58 分，低于门槛 80 分
+
+[用例 5] verdict 返回无效值（looks good）
+  期望：phase=blocked 且 source=verifier-protocol（无效 verdict 不放行）
+  实际：与预期一致
+  详情：phase=blocked source=verifier-protocol reason=独立复核返回了无效 verdict
+  缺口：verifier_protocol → verdict=looks good
+
+[用例 6] 确定性通过 + 完整评分且达标 + verdict=pass（正对照）
+  期望：phase=reviewed（唯一能放行的路径）
+  实际：与预期一致
+  详情：phase=reviewed source=independent-verifier reason=独立复核已通过 score=94
+
+==============================================================================
+结论：6 个用例全部与预期一致。
+==============================================================================

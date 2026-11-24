@@ -23,7 +23,9 @@ bash local_run_probe.sh
 4. `python3 probe_admin_api.py` —— 跑 4 项管理 API 探针
 5. `python3.12 -m unittest tools.dev.test_start_local` —— 跑上游自带的启动器单元测试
 6. `node tools/check-public-source.cjs` —— 跑上游自带的公开源清单校验
-7. 打印输出目录与汇总（`SUMMARY.txt`）
+7. `node probe_goal_verifier.js --repo <repo>` —— 实跑上游确定性门禁（8 个用例，归因闭环）
+8. `node probe_goal_review.js --repo <repo>` —— 实跑上游独立复核协议层（6 个用例）
+9. 打印输出目录与汇总（`SUMMARY.txt`）
 
 **脚本不使用任何预置的"标准输出"**——所有数字都是当次跑出来的。
 探针的「期望值」来自**回查源码路由装饰器后的结论**（`hub-backend/app/api/admin.py` 的 1355 / 1361 / 1405 / 1430 / 1449 / 1478 / 1540 行），
@@ -40,6 +42,8 @@ bash local_run_probe.sh
 | `service_stdout.log` | Hub 启动 stdout，含 `SoduWork is ready: http://127.0.0.1:18989` |
 | `probe_admin_api.txt` | 4 项管理 API 探针逐条输出（200 / 404 / 404 / 200 / 401 + 10 家内置服务商清单） |
 | `upstream_selfcheck.txt` | 上游启动器 123 项测试 + 公开源清单校验输出 |
+| `probe_goal_review.txt` | **独立复核协议层 6 个用例的实测输出**（模型不能覆盖已失败的确定性门禁 · 畸形输出不兜底 · `verdict=pass` 但分数不够被强制降级为 `repair`） |
+| `probe_goal_review.js` | 复核协议层实测脚本（直接 require 上游 `goal-review.js` 的 `outcome()`，**不需要模型 API Key**） |
 | `SUMMARY.txt` | 取证汇总：机器、时间、Fork 地址、取证 commit、服务地址 |
 | `probe_admin_api.py` | 探针脚本本体（仅用 Python 标准库） |
 | `local_run_probe.sh` | 「一条命令跑完全流程」的封装脚本 |
@@ -57,7 +61,10 @@ bash local_run_probe.sh
 
 ## 四、诚实边界
 
-- 本包中的所有结果都来自**部署层与接口层**（Hub 生命周期、管理台、鉴权边界、模型目录）。
+- 本包中的所有结果都来自**部署层、接口层与门禁协议层**（Hub 生命周期、管理台、鉴权边界、模型目录、
+  确定性门禁 `goal-verifier.js` 的判定分支、独立复核 `goal-review.js` 的协议分支）。
+- 两个探针脚本测的是**上游自己的判定代码**，模型输出是用构造样本代替的——
+  它们能证明「即使模型想放行，这段代码也不会让它放行」，**不能**证明模型评审的质量。
 - **本包不含任何模型跑分、通过率或性能数字** —— 当时没有可用的模型 API Key，
   因此「跑完一件真实业务任务」这件事没有做，文章 §8.2 已如实登记为未完成。
 - 本包不含任何他人（第三方）的截图、日志或测试结果。
