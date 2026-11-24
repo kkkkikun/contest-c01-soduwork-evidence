@@ -8,13 +8,14 @@
 #                   以及它和这次结果的对应关系。」
 #
 # 本脚本在你自己的电脑上完成：
-#   1) 克隆 Fork（github.com/kkkkikun/SoduWork）
-#   2) sh start.sh --prepare-only   → 装依赖 + 构建管理台
-#   3) sh start.sh --password-stdin → 启动本地 Hub（默认 127.0.0.1:18989）
-#   4) 管理 API 取证（5 条断言，对应源码行）
-#   5) 跑上游仓库自带的自检套件（launcher 123 项 + 公开源清单）
-#   6) 实跑上游的确定性门禁（8 用例）与独立复核协议层（6 用例）——两项都不需要模型 API Key
-#   7) 打印「该截哪 7 张图」清单
+#   1) 检查前置环境（Python 3.12+ / Node 22.19+ / Git / 磁盘）
+#   2) 克隆 Fork（github.com/kkkkikun/SoduWork）
+#   3) sh start.sh --prepare-only   → 装依赖 + 构建管理台
+#   4) sh start.sh --password-stdin → 启动本地 Hub（默认 127.0.0.1:18989）
+#   5) 管理 API 取证（5 条断言，对应源码行）
+#   6) 跑上游仓库自带的自检套件（launcher 123 项 + 公开源清单）
+#   7) 实跑上游的确定性门禁（8 用例）与独立复核协议层（6 用例）——两项都不需要模型 API Key
+#   8) 打印「该截哪 7 张图」清单
 #
 # 用法：
 #   bash source/local_run_probe.sh
@@ -23,6 +24,8 @@
 #   SODU_REPO_DIR=$HOME/SoduWork        Fork 克隆目录
 #   SODU_DATA_DIR=$HOME/.local/share/soduwork/source-service   数据目录
 #   SODU_OUT_DIR=$HOME/soduwork-local-evidence                取证输出目录
+#   SODU_PASSWORD=<密码>    指定该实例的 admin 密码（隔离复跑时用；不设则按
+#                            输出目录 → ~/soduwork-local-evidence → 数据目录 顺序查找）
 #   SODU_DESKTOP=1           额外安装并打开 Electron 桌面端（需图形环境）
 #   SODU_OFFICIAL_MIRROR=1   用官方 pypi/npm 源（默认用国内镜像，更稳）
 #

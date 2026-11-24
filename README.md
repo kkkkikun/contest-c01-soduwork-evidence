@@ -91,7 +91,7 @@ python3 probe_admin_api.py --base http://127.0.0.1:18989 --user admin --password
 | Fork | `https://github.com/kkkkikun/SoduWork`（父仓库 `https://github.com/mdiri-ai/SoduWork`） |
 | 取证 commit | `5a60c86697bcde25548c4277ba585b71f31c9338` |
 | Hub 地址 | `http://127.0.0.1:18989`（回环，未对外暴露） |
-| 取证时间 | 2026-11-24 **12:00–12:08** +08:00（首次安装与启动）；**13:5x–14:0x 复跑刷新全部产物** |
+| 取证时间 | 2026-11-24 **12:00–12:08** +08:00（首次安装与启动）；**13:5x–15:1x 复跑刷新全部产物** |
 
 ## 四、诚实边界
 
